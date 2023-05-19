@@ -34,7 +34,7 @@ async function run() {
 
         const userAddedData = client.db("toyCars").collection("userDataCollection");
 
-        app.post('/newtoy', async(req, res) => {
+        app.post('/newtoy',  async(req, res) => {
             const newToy = req.body;
             console.log(newToy);
             const result = await userAddedData.insertOne(newToy);
