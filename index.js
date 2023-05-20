@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -27,23 +27,47 @@ async function run() {
         const dataCollection = client.db("toyCars").collection("allData");
 
         app.get('/alldata', async (req, res) => {
-            const cursor = dataCollection.find();
-            const result = await cursor.toArray();
+            const result = await dataCollection.find().toArray();
             res.send(result);
         })
 
         const userAddedData = client.db("toyCars").collection("userDataCollection");
 
-        app.post('/newtoy',  async(req, res) => {
+        app.post('/newtoy', async (req, res) => {
             const newToy = req.body;
-            console.log(newToy);
             const result = await userAddedData.insertOne(newToy);
             res.send(result);
         })
 
+        app.get('/newtoy/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await userAddedData.findOne(query);
+            res.send(result);
+        })
+
         app.get('/newtoy', async (req, res) => {
-            const cursor = userAddedData.find();
-            const result = await cursor.toArray();
+            let query = {};
+            if (req.query?.email) {
+                query = { email: req.query.email }
+            }
+            const options = {
+                sort: { title: 1 }
+            };
+            const result = await userAddedData.find(query, options).toArray();
+            res.send(result);
+        })
+
+        app.delete ('/newtoy/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await userAddedData.deleteOne(query);
+            res.send(result);
+        })
+        app.get ('/newtoy/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) };
+            const result = await userAddedData.findOne(query);
             res.send(result);
         })
 
