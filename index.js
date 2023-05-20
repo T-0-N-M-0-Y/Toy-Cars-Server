@@ -58,16 +58,33 @@ async function run() {
             res.send(result);
         })
 
-        app.delete ('/newtoy/:id', async (req, res) => {
+        app.delete('/newtoy/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await userAddedData.deleteOne(query);
             res.send(result);
         })
-        app.get ('/newtoy/:id', async (req, res) => {
+
+        app.get('/newtoy/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await userAddedData.findOne(query);
+            res.send(result);
+        })
+
+        app.put('/newtoy/:id', async (req, res) => {
+            const id = req.params.id;
+            const updateToy = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updatedToy = {
+                $set: {
+                    price: updateToy.price, 
+                    quantity:updateToy.quantity,
+                    details: updateToy.details
+                },
+            };
+            const result = await userAddedData.updateOne(filter, updatedToy, options);
             res.send(result);
         })
 
