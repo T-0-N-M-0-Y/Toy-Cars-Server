@@ -52,10 +52,7 @@ async function run() {
             if (req.query?.email) {
                 query = { email: req.query.email }
             }
-            const options = {
-                sort: { title: 1 }
-            };
-            const result = await userAddedData.find(query, options).toArray();
+            const result = await userAddedData.find(query).sort({price: 1}).toArray();
             res.send(result);
         })
 
